@@ -1,5 +1,7 @@
 import { Component, OnInit  } from '@angular/core';
 import { CalendarDay } from './calendar-day-model';
+import { readFileSync } from 'fs';
+
 
 @Component({
   selector: 'app-calendar',
@@ -116,8 +118,15 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  ReadHolidaysFromFile() {
+    var file = readFileSync('./src/app/data/holidays.txt', 'utf-8');
+    var lines = file.split('\n');
+    console.log(lines[1]);
+  }
+
   // returns all days that need to be shown in calendar
   GetSelectedMonthDays(month: number, year: number) {
+    this.ReadHolidaysFromFile();
     var leapYear = this.IsLeapYear(year);
     this.GetPreviousMonthDaysCalendar(month, year, leapYear);
     this.GetCurrentMonthDaysCalendar(month, year, leapYear);
@@ -126,6 +135,6 @@ export class CalendarComponent implements OnInit {
 
   ngOnInit() {
     this.GetSelectedMonthDays(2, 2024);
-    console.log(this.calendarDays);
+    //console.log(this.calendarDays);
   }
 }
