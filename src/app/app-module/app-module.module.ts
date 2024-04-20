@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from '../app.component';
-import { CalendarComponent } from '../calendar/calendar.component';
-
 
 @NgModule({
   declarations: [
@@ -15,7 +13,10 @@ import { CalendarComponent } from '../calendar/calendar.component';
     CommonModule,
   ],
   providers: [],
-  bootstrap: [
-  ]
+  bootstrap: []
 })
-export class AppModule { }
+export class AppModule {
+  ngDoBootstrap() {
+    
+  }
+ }
