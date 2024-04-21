@@ -27,7 +27,7 @@ tr:nth-child(even) {
 }
 
 .sunday {
-    color: red;
+    background-color: #45a049;
     font-weight: bold;
 }
 
@@ -83,7 +83,6 @@ tr:nth-child(even) {
     outline: none; /* Remove default focus outline */
 }
 
-/* styles.css */
 .submit-button {
     background-color: #4CAF50; /* Green */
     border: none;

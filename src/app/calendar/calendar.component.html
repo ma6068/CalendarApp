@@ -1,43 +1,57 @@
 <div class="center">
-    <h1>Super Calendar</h1>
-    <form (ngSubmit)="StartingDateSelected()">
-        <div class="input-row">
-            <select id="monthSelect" name="monthSelect" [(ngModel)]="selectedMonth" (ngModelChange)="MonthIsSelected()">
-                <option value="">Select month</option>
-                <option value="1">January</option>
-                <option value="2">February</option>
-                <option value="3">March</option>
-                <option value="4">April</option>
-                <option value="5">May</option>
-                <option value="6">June</option>
-                <option value="7">July</option>
-                <option value="8">August</option>
-                <option value="9">September</option>
-                <option value="10">October</option>
-                <option value="11">November</option>
-                <option value="12">December</option>
-            </select>
-            <input type="text" id="yearSelect" name="yearSelect" placeholder="Enter year" [(ngModel)]="selectedYear" (ngModelChange)="YearIsNotValid()">
-            <button type="submit" class="submit-button" (onclick)="StartingDateSelected()">Submit</button>
-        </div>
-        <div *ngIf="isMonthErrorVisible" class="row">
-            <p class="error-message">You must select a month.</p>
-        </div>
-        <div *ngIf="isYearErrorVisible" class="row">
-            <p class="error-message">You must enter a year that is between 1700 and 2400.</p>
-        </div>
-    </form>       
-    <table>
-        <thead>
-            <tr>
-                <th *ngFor="let dayInWeek of daysInWeek">{{dayInWeek}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let week of calendarDaysByWeek">
-                <td *ngFor="let calendarDay of week" [ngClass]="{ 'sunday': calendarDay.isSunday }">{{calendarDay.day}}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div *ngIf="!showCalendar">
+        <h1>Please select starting date</h1>
+        <form (ngSubmit)="StartingDateSelected()">
+            <div class="input-row">
+                <select id="monthSelect" name="monthSelect" [(ngModel)]="selectedMonth" (ngModelChange)="MonthIsSelected()">
+                    <option value="">Select month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <input type="text" id="yearSelect" name="yearSelect" placeholder="Enter year" [(ngModel)]="selectedYear" (ngModelChange)="YearIsNotValid()">
+                <button type="submit" class="submit-button" (onclick)="StartingDateSelected()">Submit</button>
+            </div>
+            <div *ngIf="isMonthErrorVisible" class="row">
+                <p class="error-message">You must select a month.</p>
+            </div>
+            <div *ngIf="isYearErrorVisible" class="row">
+                <p class="error-message">You must enter a year that is between 1700 and 2400.</p>
+            </div>
+        </form>  
+    </div>
+    <div *ngIf="showCalendar">
+        <h1>Super calendar</h1>
+        <form (ngSubmit)="CustomDateSelected()">
+            <div class="input-row">
+                <input type="text" id="customDate" name="customDate" placeholder="Enter date in format dd.MM.yyyy" [(ngModel)]="customDate">
+                <button type="submit" class="submit-button" (onclick)="CustomDateSelected()">Submit</button>
+            </div>
+            <div *ngIf="isCustomDateErrorVisible" class="row">
+                <p class="error-message">You must enter a valid date. Also be sure that the year is between 1700 and 2400.</p>
+            </div>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th *ngFor="let dayInWeek of daysInWeek">{{dayInWeek}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let week of calendarDaysByWeek">
+                    <td *ngFor="let calendarDay of week" [ngClass]="{ 'sunday': calendarDay.isSunday }">{{calendarDay.day}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 

@@ -20,6 +20,8 @@ export class CalendarComponent implements OnInit {
   isMonthErrorVisible: boolean = false;
   isYearErrorVisible: boolean = false;
   showCalendar: boolean = false;
+  customDate: any = "";
+  isCustomDateErrorVisible: boolean = false;
 
   // global static variables initialization
   daysInWeek = ["Monday", "Tuesday", "WednesDay", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -180,7 +182,8 @@ export class CalendarComponent implements OnInit {
 
   // returns all days that need to be shown in calendar
   GetSelectedMonthDays(month: number, year: number) {
-    this.ReadHolidaysFromFile();
+    this.calendarDays = new Array<CalendarDay>();
+    this.calendarDaysByWeek = [];
     var leapYear = this.IsLeapYear(year);
     this.GetPreviousMonthDaysCalendar(month, year, leapYear);
     this.GetCurrentMonthDaysCalendar(month, year, leapYear);
@@ -215,8 +218,6 @@ export class CalendarComponent implements OnInit {
   }
 
   StartingDateSelected() {
-    this.calendarDays = new Array<CalendarDay>();
-    this.calendarDaysByWeek = [];
     this.MonthIsSelected();
     this.YearIsNotValid();
     if (!this.isMonthErrorVisible && !this.isYearErrorVisible) {
@@ -224,10 +225,44 @@ export class CalendarComponent implements OnInit {
       var year = Number(this.selectedYear);
       this.GetSelectedMonthDays(month, year);
       this.GetMonthDaysByWeek();
+      this.showCalendar = true;
+    }
+  }
+
+  CheckIfStringIsValidDate(date: string): boolean{
+    var regex = /^(0[1-9]|1[0-9]|2[0-9]|3[0-1]).(0[1-9]|1[0-2]).(\d{4})$/; 
+    if (!regex.test(date)) {
+      return false;
+    }
+    var data = date.split(".");
+    var day = data[0].startsWith("0") ? Number(data[0][1]) : Number(data[0]);
+    var month = data[1].startsWith("0") ? Number(data[1][1]) : Number(data[1]);
+    var year = Number(data[2]);
+    var monthDays = this.daysInMonth[month - 1];
+    if (month == 2 && this.IsLeapYear(year)) {
+      monthDays += 1;
+    }
+    if (year < 1700 || year >= 2400) return  false;
+    if (day > monthDays) return false;
+    return true;
+  }
+
+  CustomDateSelected() {
+    var fullDate = this.customDate;
+    if (this.CheckIfStringIsValidDate(fullDate)) {
+      this.isCustomDateErrorVisible = false;
+      var data = fullDate.split(".");
+      var month = data[1].startsWith("0") ? Number(data[1][1]) : Number(data[1]);
+      var year = Number(data[2]);
+      this.GetSelectedMonthDays(month, year);
+      this.GetMonthDaysByWeek();
+    }
+    else {
+      this.isCustomDateErrorVisible = true;
     }
   }
 
   ngOnInit() {
-    
+    this.ReadHolidaysFromFile();
   }
 }
