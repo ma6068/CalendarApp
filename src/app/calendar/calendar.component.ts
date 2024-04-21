@@ -20,6 +20,8 @@ export class CalendarComponent implements OnInit {
   monthCodes = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5]
   centuryCodes = [4, 2, 0, 6, 4, 2, 0] // from 1700s to 2300s
   numberOfShownDaysInCalendar = 42;
+  permanentHolidays: string[] = [];
+  variableHolidays: string[] = [];
   calendarDays = new Array<CalendarDay>();
 
   // returns true if is a leap year, otherwise returns false
@@ -80,7 +82,8 @@ export class CalendarComponent implements OnInit {
         var calendarDay: CalendarDay = {
           day: i,
           month: previousMonth,
-          year: previousMonthYear
+          year: previousMonthYear,
+          isHoliday: this.IsHoliday(i, previousMonth, previousMonthYear)
         };
         this.calendarDays.push(calendarDay);
       }
@@ -97,7 +100,8 @@ export class CalendarComponent implements OnInit {
       var calendarDay: CalendarDay = {
         day: i,
         month: month,
-        year: year
+        year: year,
+        isHoliday: this.IsHoliday(i,  month, year)
       };
       this.calendarDays.push(calendarDay);
     }
@@ -112,16 +116,37 @@ export class CalendarComponent implements OnInit {
       var calendarDay: CalendarDay = {
         day: i,
         month: nextMonth,
-        year: nextMonthYear
+        year: nextMonthYear,
+        isHoliday: this.IsHoliday(i, nextMonth, nextMonthYear)
       };
       this.calendarDays.push(calendarDay);
     }
   }
 
+  // reads holidays from file and put them in arrays
   ReadHolidaysFromFile() {
     var file = readFileSync('./src/app/data/holidays.txt', 'utf-8');
     var lines = file.split('\n');
-    console.log(lines[1]);
+    for(var i = 0; i < lines.length; i++) {
+      var data = lines[i].split(".");
+      // holiday is on same date every year
+      if (data.length == 2) {
+        this.permanentHolidays.push(lines[i].trimEnd());
+      }
+      // holiday is on different date
+      else {
+        this.variableHolidays.push(lines[i].trimEnd());
+      }
+    }
+  }
+
+  // returns true if the given date is holiday, otherise returns false
+  IsHoliday(day: number, month: number, year: number) {
+    var dayString = day <= 9 ? "0" + day.toString() : day.toString();
+    var monthString = month <= 9 ? "0" + month.toString() : month.toString();
+    var dayAndMonthString = dayString + "." + monthString;
+    var fullDateString = dayString + "." + monthString + "." + year.toString();
+    return this.permanentHolidays.includes(dayAndMonthString) || this.variableHolidays.includes(fullDateString);
   }
 
   // returns all days that need to be shown in calendar
@@ -134,7 +159,7 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.GetSelectedMonthDays(2, 2024);
-    //console.log(this.calendarDays);
+    this.GetSelectedMonthDays(4, 2023);
+    console.log(this.calendarDays);
   }
 }
