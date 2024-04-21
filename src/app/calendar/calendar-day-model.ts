@@ -3,4 +3,5 @@ export interface CalendarDay {
     month: number;
     year: number;
     isHoliday: boolean;
+    isSunday: boolean;
 }

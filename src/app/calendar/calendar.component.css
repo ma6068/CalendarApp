@@ -46,7 +46,7 @@ tr:nth-child(even) {
     margin-bottom: 10px; /* Add margin between input rows */
 }
 
-#monthSelect, #customDate, #anotherDate {
+#monthSelect {
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -56,7 +56,63 @@ tr:nth-child(even) {
     margin-right: 10px; /* Add margin to the right of the input field */
 }
 
-#monthSelect:focus, #customDate:focus, #anotherDate:focus {
+#yearSelect {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box; /* Include padding in the width */
+    transition: border-color 0.3s;
+    margin-right: 10px; /* Add margin to the right of the input field */
+    width: 120px;
+}
+
+#customDate {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box; /* Include padding in the width */
+    transition: border-color 0.3s;
+    margin-right: 10px; /* Add margin to the right of the input field */
+    width: 255px;
+}
+
+#monthSelect:focus, #yearSelect:focus, #customDate:focus {
     border-color: dodgerblue; /* Change border color on focus */
     outline: none; /* Remove default focus outline */
 }
+
+/* styles.css */
+.submit-button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 36px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+  
+  /* Hover effect */
+  .submit-button:hover {
+    background-color: #45a049; /* Darker green */
+  }
+  
+  /* Pressed effect */
+  .submit-button:active {
+    background-color: #3e8e41; /* Even darker green */
+  }
+
+  .error-message {
+    color: #ff6666;;
+    font-size: 17px;
+    font-weight: bold;
+    margin-top: 5px;
+  }
+  
+  

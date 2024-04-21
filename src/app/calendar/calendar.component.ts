@@ -2,16 +2,24 @@ import { Component, OnInit  } from '@angular/core';
 import { CalendarDay } from './calendar-day-model';
 import { readFileSync } from 'fs';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent implements OnInit {
+
+  // Inputs
+  selectedMonth: any = "";
+  selectedYear: any = "";
+  isMonthErrorVisible: boolean = false;
+  isYearErrorVisible: boolean = false;
+  showCalendar: boolean = false;
 
   // global static variables initialization
   daysInWeek = ["Monday", "Tuesday", "WednesDay", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -24,10 +32,7 @@ export class CalendarComponent implements OnInit {
   permanentHolidays: string[] = [];
   variableHolidays: string[] = [];
   calendarDays = new Array<CalendarDay>();
-
-  selectedMonth: any;
-  customDate: any;
-  anotherDate: any;
+  calendarDaysByWeek: CalendarDay[][] = [];
 
   // returns true if is a leap year, otherwise returns false
   IsLeapYear(year: number): boolean {
@@ -88,6 +93,7 @@ export class CalendarComponent implements OnInit {
           day: i,
           month: previousMonth,
           year: previousMonthYear,
+          isSunday: false,
           isHoliday: this.IsHoliday(i, previousMonth, previousMonthYear)
         };
         this.calendarDays.push(calendarDay);
@@ -106,6 +112,7 @@ export class CalendarComponent implements OnInit {
         day: i,
         month: month,
         year: year,
+        isSunday: false,
         isHoliday: this.IsHoliday(i,  month, year)
       };
       this.calendarDays.push(calendarDay);
@@ -122,6 +129,7 @@ export class CalendarComponent implements OnInit {
         day: i,
         month: nextMonth,
         year: nextMonthYear,
+        isSunday: false,
         isHoliday: this.IsHoliday(i, nextMonth, nextMonthYear)
       };
       this.calendarDays.push(calendarDay);
@@ -130,19 +138,35 @@ export class CalendarComponent implements OnInit {
 
   // reads holidays from file and put them in arrays
   ReadHolidaysFromFile() {
-    var file = readFileSync('./src/app/data/holidays.txt', 'utf-8');
-    var lines = file.split('\n');
-    for(var i = 0; i < lines.length; i++) {
-      var data = lines[i].split(".");
-      // holiday is on same date every year
-      if (data.length == 2) {
-        this.permanentHolidays.push(lines[i].trimEnd());
-      }
-      // holiday is on different date
-      else {
-        this.variableHolidays.push(lines[i].trimEnd());
-      }
-    }
+    // this.http.get('./src/app/data/holidays.txt').subscribe((data: any) => {
+    //   var text = (<any>data)._body;
+    //   var lines = text.split('\n');
+    //   for(var i = 0; i < lines.length; i++) {
+    //   var data = lines[i].split(".");
+    //   // holiday is on same date every year
+    //   if (data.length == 2) {
+    //     this.permanentHolidays.push(lines[i].trimEnd());
+    //   }
+    //   // holiday is on different date
+    //   else {
+    //     this.variableHolidays.push(lines[i].trimEnd());
+    //   }
+    // }
+    // });
+
+    // var file = readFileSync('./src/app/data/holidays.txt', 'utf-8');
+    // var lines = file.split('\n');
+    // for(var i = 0; i < lines.length; i++) {
+    //   var data = lines[i].split(".");
+    //   // holiday is on same date every year
+    //   if (data.length == 2) {
+    //     this.permanentHolidays.push(lines[i].trimEnd());
+    //   }
+    //   // holiday is on different date
+    //   else {
+    //     this.variableHolidays.push(lines[i].trimEnd());
+    //   }
+    // }
   }
 
   // returns true if the given date is holiday, otherise returns false
@@ -163,8 +187,47 @@ export class CalendarComponent implements OnInit {
     this.GetNextMonthDaysCalendar(month, year);
   }
 
+  // checks whether the month is selected
+  MonthIsSelected() {
+    this.isMonthErrorVisible = false;
+    if (this.selectedMonth == "") this.isMonthErrorVisible = true;
+  }
+
+  // checks whether the entered year is valid
+  YearIsNotValid() {
+    this.isYearErrorVisible = false;
+    if (this.selectedYear == undefined) this.isYearErrorVisible = true;
+    var selectedYearNumber = Number(this.selectedYear);
+    if (isNaN(selectedYearNumber)) this.isYearErrorVisible = true;
+    if (selectedYearNumber < 1700 || selectedYearNumber >= 2400) this.isYearErrorVisible = true;
+  }
+
+  GetMonthDaysByWeek() {
+    for(var i = 0; i < 6; i++) {
+      this.calendarDaysByWeek[i] = [];
+      for(var j=0; j < 7; j++){
+        this.calendarDaysByWeek[i].push(this.calendarDays[i*7+j]);
+        if (j == 6) {
+          this.calendarDaysByWeek[i][6].isSunday = true;
+        }
+      }
+    }
+  }
+
+  StartingDateSelected() {
+    this.calendarDays = new Array<CalendarDay>();
+    this.calendarDaysByWeek = [];
+    this.MonthIsSelected();
+    this.YearIsNotValid();
+    if (!this.isMonthErrorVisible && !this.isYearErrorVisible) {
+      var month = Number(this.selectedMonth);
+      var year = Number(this.selectedYear);
+      this.GetSelectedMonthDays(month, year);
+      this.GetMonthDaysByWeek();
+    }
+  }
+
   ngOnInit() {
-    this.GetSelectedMonthDays(4, 2023);
-    console.log(this.calendarDays);
+    
   }
 }
