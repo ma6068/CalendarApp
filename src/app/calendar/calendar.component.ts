@@ -1,12 +1,13 @@
 import { Component, OnInit  } from '@angular/core';
 import { CalendarDay } from './calendar-day-model';
 import { readFileSync } from 'fs';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [],
+  imports: [FormsModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
 })
@@ -23,6 +24,10 @@ export class CalendarComponent implements OnInit {
   permanentHolidays: string[] = [];
   variableHolidays: string[] = [];
   calendarDays = new Array<CalendarDay>();
+
+  selectedMonth: any;
+  customDate: any;
+  anotherDate: any;
 
   // returns true if is a leap year, otherwise returns false
   IsLeapYear(year: number): boolean {

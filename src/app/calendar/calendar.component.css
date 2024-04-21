@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+table {
+    width: 70%;
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.center {
+    text-align: center;
+}
+
+.sunday {
+    color: red;
+    font-weight: bold;
+}
+
+.current {
+    background-color: yellow;
+}
+
+.header {
+    text-align: center;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px; /* Add margin between input rows */
+}
+
+#monthSelect, #customDate, #anotherDate {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-sizing: border-box; /* Include padding in the width */
+    transition: border-color 0.3s;
+    margin-right: 10px; /* Add margin to the right of the input field */
+}
+
+#monthSelect:focus, #customDate:focus, #anotherDate:focus {
+    border-color: dodgerblue; /* Change border color on focus */
+    outline: none; /* Remove default focus outline */
+}
