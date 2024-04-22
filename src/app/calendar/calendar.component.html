@@ -32,6 +32,9 @@
     <div *ngIf="showCalendar">
         <h1>Super calendar</h1>
         <form (ngSubmit)="CustomDateSelected()">
+            <div class="div-custom">
+                <div>If you want to review any date, enter it below</div>
+            </div>
             <div class="input-row">
                 <input type="text" id="customDate" name="customDate" placeholder="Enter date in format dd.MM.yyyy" [(ngModel)]="customDate">
                 <button type="submit" class="submit-button" (onclick)="CustomDateSelected()">Submit</button>

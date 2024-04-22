@@ -9,7 +9,7 @@ table {
 }
 
 th, td {
-    border: 1px solid #ddd;
+    border: 3px solid #ddd;
     padding: 8px;
     text-align: center;
 }
@@ -27,13 +27,11 @@ th {
 }
 
 .holiday {
-    background-color: #d71111;
-    font-weight: bold;
+    background-color: #ef620a;
 }
 
 .sunday {
     background-color: #45a049;
-    font-weight: bold;
 }
 
 .header {
@@ -45,6 +43,13 @@ th {
     align-items: center;
     justify-content: center;
     margin-bottom: 10px; /* Add margin between input rows */
+}
+
+.div-custom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px; /* Add margin between input rows */
 }
 
 #monthSelect {
@@ -123,7 +128,7 @@ th {
   }
 
   .error-message {
-    color: #ff6666;;
+    color: #ee1717;;
     font-size: 17px;
     font-weight: bold;
     margin-top: 5px;
@@ -158,7 +163,8 @@ th {
 }
 
 .selected-date {
-    border-radius: 8px;
-    border-color: black;
+    font-weight: bold;
+    font-size: large;
+    color:#062cc2
 }
   
