@@ -18,27 +18,37 @@ export class CalendarComponent implements OnInit {
 
   constructor(private fileService: FileService) {}
 
-  // Inputs
-  selectedMonth: any = "";
-  selectedYear: any = "";
+  // page elements
+  selectedMonth: any = ""; // value of months dropdown (start date)
+  selectedYear: any = ""; // value of year input field (start date)
+  customDate: any = ""; // value of selected date (calendar)
+  showCalendar: boolean = false; 
+
+  // variables that shows if error message is visible
   isMonthErrorVisible: boolean = false;
   isYearErrorVisible: boolean = false;
-  showCalendar: boolean = false;
-  customDate: any = "";
   isCustomDateErrorVisible: boolean = false;
-
+  
   // global variables initialization
   daysInWeek = ["Monday", "Tuesday", "WednesDay", "Thursday", "Friday", "Saturday", "Sunday"];
   months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]; 
+  numberOfShownDaysInCalendar = 42;
+
+  // variables used for determining the day of the week
   dayCodes = [1, 2, 3, 4, 5, 6, 0];
   monthCodes = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5]
   centuryCodes = [4, 2, 0, 6, 4, 2, 0] // from 1700s to 2300s
-  numberOfShownDaysInCalendar = 42;
+
+  // arrays that have values of permanent and variable holidays
   permanentHolidays: string[] = [];
   variableHolidays: string[] = [];
-  calendarDays = new Array<CalendarDay>();
-  calendarDaysByWeek: CalendarDay[][] = [];
+
+  // arrays that have data for cells displayed in calendar
+  calendarDays = new Array<CalendarDay>(); // all calendar days
+  calendarDaysByWeek: CalendarDay[][] = []; // all calendar days separated by week
+
+  // variables that hold information about the month and year of the displayed month in the calendar 
   currentCalendarMonth: number = -1;
   currentCalendarYear: number = -1;
   calendarHeadMonth: string = "";
@@ -80,13 +90,14 @@ export class CalendarComponent implements OnInit {
   }
 
   // returns index of day in the week for given date
+  // returns values from 0 to 6
   GetDayIndexInWeek(day: number, month: number, year: number): number {
     var dayCodeIndex = (this.GetYearCode(year) + this.GetMonthCode(month) + this.GetCenturyCode(year) + day - this.GetLeapYearCode(month, year)) % 7;
     var dayIndex = this.dayCodes.indexOf(dayCodeIndex);
     return dayIndex;
   }
 
-  // returns all days from previous month that should be shown in the calendar
+  // add all days from previous month that should be displayed in the calendar in the array
   GetPreviousMonthDaysCalendar(month: number, year: number, leapYear: boolean): void {
     var firstDayInMonthWeekIndex = this.GetDayIndexInWeek(1, month, year);
     // if is not monday => add days from previous month
@@ -112,7 +123,7 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  // returns all days from current month that should be shown in the calendar
+  // add all days from current month that should be displayed in the calendar in the array
   GetCurrentMonthDaysCalendar(month: number, year: number, leapYear: boolean): void {
     var daysInMonth = this.daysInMonth[month - 1];
     if (month == 2 && leapYear) {
@@ -131,7 +142,7 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  // returns all days from next month that should be shown in the calendar
+  // add all days from next month that should be displayed in the calendar in the array
   GetNextMonthDaysCalendar(month: number, year: number): void {
     var nextMonth = month + 1 == 13 ? 1 : month + 1;
     var nextMonthYear = month + 1 == 13 ? year + 1 : year;
@@ -149,11 +160,24 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  // separates the days that must appear in the calendar by weeks
+  GetMonthDaysByWeek() {
+    for(var i = 0; i < 6; i++) {
+      this.calendarDaysByWeek[i] = [];
+      for(var j=0; j < 7; j++){
+        this.calendarDaysByWeek[i].push(this.calendarDays[i*7+j]);
+        if (j == 6) {
+          this.calendarDaysByWeek[i][6].isSunday = true;
+        }
+      }
+    }
+  }
+
   // reads holidays from file and put them in arrays
   async ReadHolidaysFromFile() { 
     var textFile = "";
-    await this.fileService.readFile().then((odgovor: any) => {
-      textFile = odgovor;
+    await this.fileService.readFile().then((response: any) => {
+      textFile = response;
     });
     var lines = textFile.split('\n'); 
     for(var i = 0; i < lines.length; i++) {
@@ -169,7 +193,7 @@ export class CalendarComponent implements OnInit {
     }
   }
 
-  // returns true if the given date is holiday, otherise returns false
+  // returns true if the given date is holiday, otherwise returns false
   IsHoliday(day: number, month: number, year: number) {
     var dayString = day <= 9 ? "0" + day.toString() : day.toString();
     var monthString = month <= 9 ? "0" + month.toString() : month.toString();
@@ -178,7 +202,7 @@ export class CalendarComponent implements OnInit {
     return this.permanentHolidays.includes(dayAndMonthString) || this.variableHolidays.includes(fullDateString);
   }
 
-  // returns all days that need to be shown in calendar
+  // set all days that need to be displayed in calendar
   GetSelectedMonthDays(month: number, year: number) {
     this.calendarDays = new Array<CalendarDay>();
     this.calendarDaysByWeek = [];
@@ -192,13 +216,13 @@ export class CalendarComponent implements OnInit {
     this.GetNextMonthDaysCalendar(month, year);
   }
 
-  // checks whether the month is selected
+  // checks whether the starting month is selected
   MonthIsSelected() {
     this.isMonthErrorVisible = false;
     if (this.selectedMonth == "") this.isMonthErrorVisible = true;
   }
 
-  // checks whether the entered year is valid
+  // checks whether the entered starting year is valid
   YearIsNotValid() {
     this.isYearErrorVisible = false;
     if (this.selectedYear == undefined) this.isYearErrorVisible = true;
@@ -207,18 +231,7 @@ export class CalendarComponent implements OnInit {
     if (selectedYearNumber < 1700 || selectedYearNumber >= 2400) this.isYearErrorVisible = true;
   }
 
-  GetMonthDaysByWeek() {
-    for(var i = 0; i < 6; i++) {
-      this.calendarDaysByWeek[i] = [];
-      for(var j=0; j < 7; j++){
-        this.calendarDaysByWeek[i].push(this.calendarDays[i*7+j]);
-        if (j == 6) {
-          this.calendarDaysByWeek[i][6].isSunday = true;
-        }
-      }
-    }
-  }
-
+  // the starting month and year are selected => show the calendar
   StartingDateSelected() {
     this.MonthIsSelected();
     this.YearIsNotValid();
@@ -231,6 +244,9 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  // returns true if the entered custom date is valid, otherwise returns false
+  // year should be between 1700 and 2399
+  // date format must be dd.MM.yyyy
   CheckIfStringIsValidDate(date: string): boolean{
     var regex = /^(0[1-9]|1[0-9]|2[0-9]|3[0-1]).(0[1-9]|1[0-2]).(\d{4})$/; 
     if (!regex.test(date)) {
@@ -249,6 +265,9 @@ export class CalendarComponent implements OnInit {
     return true;
   }
 
+  // an event that is triggered when custom date is entered in the field
+  // if the date is valid show update calendar
+  // else show error message
   CustomDateSelected() {
     var fullDate = this.customDate;
     if (this.CheckIfStringIsValidDate(fullDate)) {
@@ -264,6 +283,7 @@ export class CalendarComponent implements OnInit {
     }
   }
 
+  // event that is triggered when previous month button is clicked
   PreviousMonthClicked(){
     this.currentCalendarMonth = this.currentCalendarMonth - 1 == 0 ? this.currentCalendarMonth = 12 : this.currentCalendarMonth - 1;
     this.currentCalendarYear = this.currentCalendarMonth == 12 ? this.currentCalendarYear - 1 : this.currentCalendarYear;
@@ -271,6 +291,13 @@ export class CalendarComponent implements OnInit {
     this.GetMonthDaysByWeek();
   }
 
+  // check if previous month is in range (min year 1700)
+  PreviousMonthNotInRange() {
+    if (this.currentCalendarMonth == 1 && this.currentCalendarYear == 1700) return true;
+    return false;
+  }
+
+  // event that is triggered when next month button is clicked
   NextMonthClicked() {
     this.currentCalendarMonth = this.currentCalendarMonth + 1 > 12 ? this.currentCalendarMonth = 1 : this.currentCalendarMonth + 1;
     this.currentCalendarYear = this.currentCalendarMonth == 1 ? this.currentCalendarYear + 1 : this.currentCalendarYear;
@@ -278,20 +305,18 @@ export class CalendarComponent implements OnInit {
     this.GetMonthDaysByWeek();
   }
 
-  PreviousMonthNotInRange() {
-    if (this.currentCalendarMonth == 1 && this.currentCalendarYear == 1700) return true;
-    return false;
-  }
-
+  // check if next month is in range (max year 2399)
   NextMonthNotInRange() {
     if (this.currentCalendarMonth == 12 && this.currentCalendarYear == 2399) return true;
     return false;
   }
 
+  // close the calendar
   CloseCalendar() {
     this.showCalendar = false;
   }
 
+  // on init function
   ngOnInit() {
     this.ReadHolidaysFromFile();
   }
