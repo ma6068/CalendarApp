@@ -8,6 +8,7 @@ export class FileService {
 
     constructor(private http: HttpClient) {}
 
+    // method that reads file with holidays
     public async readFile(): Promise<any> {
         return await this.http.get(this.filePath, { responseType: 'text' }).toPromise() as string;
     }

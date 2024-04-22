@@ -5,4 +5,5 @@ export interface CalendarDay {
     isHoliday: boolean;
     isSunday: boolean;
     isInCurrentMonth: boolean;
+    isSelectedDate: boolean;
 }

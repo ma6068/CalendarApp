@@ -54,6 +54,11 @@ export class CalendarComponent implements OnInit {
   calendarHeadMonth: string = "";
   calendarHeadYear: string = "";
 
+  // variables that hold information about the date that the user type in custom date field
+  customSelectedDay: number = -1;
+  customSelectedMonth: number = -1;
+  customSelectedYear: number = -1;
+
   // returns true if is a leap year, otherwise returns false
   IsLeapYear(year: number): boolean {
     return year % 4 == 0 && (year % 100 !== 0 || year % 400 === 0);
@@ -116,7 +121,8 @@ export class CalendarComponent implements OnInit {
           year: previousMonthYear,
           isSunday: false,
           isHoliday: this.IsHoliday(i, previousMonth, previousMonthYear),
-          isInCurrentMonth: false
+          isInCurrentMonth: false,
+          isSelectedDate: false
         };
         this.calendarDays.push(calendarDay);
       }
@@ -136,7 +142,8 @@ export class CalendarComponent implements OnInit {
         year: year,
         isSunday: false,
         isHoliday: this.IsHoliday(i,  month, year),
-        isInCurrentMonth: true
+        isInCurrentMonth: true,
+        isSelectedDate: this.customSelectedDay == i && this.customSelectedMonth == month && this.customSelectedYear == year
       };
       this.calendarDays.push(calendarDay);
     }
@@ -154,7 +161,8 @@ export class CalendarComponent implements OnInit {
         year: nextMonthYear,
         isSunday: false,
         isHoliday: this.IsHoliday(i, nextMonth, nextMonthYear),
-        isInCurrentMonth: false
+        isInCurrentMonth: false,
+        isSelectedDate: false
       };
       this.calendarDays.push(calendarDay);
     }
@@ -273,8 +281,12 @@ export class CalendarComponent implements OnInit {
     if (this.CheckIfStringIsValidDate(fullDate)) {
       this.isCustomDateErrorVisible = false;
       var data = fullDate.split(".");
+      var day = data[0].startsWith("0") ? Number(data[0][1]) : Number(data[0]);
       var month = data[1].startsWith("0") ? Number(data[1][1]) : Number(data[1]);
       var year = Number(data[2]);
+      this.customSelectedDay = day;
+      this.customSelectedMonth = month;
+      this.customSelectedYear = year;
       this.GetSelectedMonthDays(month, year);
       this.GetMonthDaysByWeek();
     }

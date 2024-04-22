@@ -26,18 +26,14 @@ th {
     text-align: center;
 }
 
-.sunday {
-    background-color: #45a049;
-    font-weight: bold;
-}
-
 .holiday {
     background-color: #d71111;
     font-weight: bold;
 }
 
-.current {
-    background-color: yellow;
+.sunday {
+    background-color: #45a049;
+    font-weight: bold;
 }
 
 .header {
@@ -159,5 +155,10 @@ th {
   
 .table-container {
     position: relative;
+}
+
+.selected-date {
+    border-radius: 8px;
+    border-color: black;
 }
   
