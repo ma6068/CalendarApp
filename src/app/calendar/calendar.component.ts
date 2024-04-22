@@ -1,18 +1,22 @@
 import { Component, OnInit  } from '@angular/core';
 import { CalendarDay } from './calendar-day-model';
-import { readFileSync } from 'fs';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FileService } from '../fileService/file-service';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, HttpClientModule],
+  providers:[FileService],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css'
 })
 export class CalendarComponent implements OnInit {
+
+  constructor(private fileService: FileService) {}
 
   // Inputs
   selectedMonth: any = "";
@@ -146,36 +150,23 @@ export class CalendarComponent implements OnInit {
   }
 
   // reads holidays from file and put them in arrays
-  ReadHolidaysFromFile() {
-    // this.http.get('./src/app/data/holidays.txt').subscribe((data: any) => {
-    //   var text = (<any>data)._body;
-    //   var lines = text.split('\n');
-    //   for(var i = 0; i < lines.length; i++) {
-    //   var data = lines[i].split(".");
-    //   // holiday is on same date every year
-    //   if (data.length == 2) {
-    //     this.permanentHolidays.push(lines[i].trimEnd());
-    //   }
-    //   // holiday is on different date
-    //   else {
-    //     this.variableHolidays.push(lines[i].trimEnd());
-    //   }
-    // }
-    // });
-
-    // var file = readFileSync('./src/app/data/holidays.txt', 'utf-8');
-    // var lines = file.split('\n');
-    // for(var i = 0; i < lines.length; i++) {
-    //   var data = lines[i].split(".");
-    //   // holiday is on same date every year
-    //   if (data.length == 2) {
-    //     this.permanentHolidays.push(lines[i].trimEnd());
-    //   }
-    //   // holiday is on different date
-    //   else {
-    //     this.variableHolidays.push(lines[i].trimEnd());
-    //   }
-    // }
+  async ReadHolidaysFromFile() { 
+    var textFile = "";
+    await this.fileService.readFile().then((odgovor: any) => {
+      textFile = odgovor;
+    });
+    var lines = textFile.split('\n'); 
+    for(var i = 0; i < lines.length; i++) {
+      var data = lines[i].split(".");
+      // holiday is on same date every year
+      if (data.length == 2) {
+        this.permanentHolidays.push(lines[i].trimEnd());
+      }
+      // holiday is on different date
+      else {
+        this.variableHolidays.push(lines[i].trimEnd());
+      }
+    }
   }
 
   // returns true if the given date is holiday, otherise returns false
