@@ -56,7 +56,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let week of calendarDaysByWeek">
-                        <td *ngFor="let calendarDay of week" [ngClass]="{ 'sunday': calendarDay.isSunday, 'disabled-cell': !calendarDay.isInCurrentMonth}">{{calendarDay.day}}</td>
+                        <td *ngFor="let calendarDay of week" [ngClass]="{ 'sunday': calendarDay.isSunday, 'holiday': calendarDay.isHoliday, 'disabled-cell': !calendarDay.isInCurrentMonth}">{{calendarDay.day}}</td>
                     </tr>
                 </tbody>
             </table>

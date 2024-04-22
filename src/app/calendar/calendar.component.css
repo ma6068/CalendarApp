@@ -31,6 +31,11 @@ th {
     font-weight: bold;
 }
 
+.holiday {
+    background-color: #d71111;
+    font-weight: bold;
+}
+
 .current {
     background-color: yellow;
 }
