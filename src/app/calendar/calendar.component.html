@@ -25,7 +25,7 @@
                 <p class="error-message">You must select a month.</p>
             </div>
             <div *ngIf="isYearErrorVisible" class="row">
-                <p class="error-message">You must enter a year that is between 1700 and 2400.</p>
+                <p class="error-message">You must enter a year that is between 1700 and 2399.</p>
             </div>
         </form>  
     </div>
@@ -37,21 +37,31 @@
                 <button type="submit" class="submit-button" (onclick)="CustomDateSelected()">Submit</button>
             </div>
             <div *ngIf="isCustomDateErrorVisible" class="row">
-                <p class="error-message">You must enter a valid date. Also be sure that the year is between 1700 and 2400.</p>
+                <p class="error-message">You must enter a valid date. Also be sure that the year is between 1700 and 2399.</p>
             </div>
         </form>
-        <table>
-            <thead>
-                <tr>
-                    <th *ngFor="let dayInWeek of daysInWeek">{{dayInWeek}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let week of calendarDaysByWeek">
-                    <td *ngFor="let calendarDay of week" [ngClass]="{ 'sunday': calendarDay.isSunday }">{{calendarDay.day}}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <td colspan="7">
+                            <button [disabled]="PreviousMonthNotInRange()" (click)="PreviousMonthClicked()" [ngClass]="{'disabled-button': PreviousMonthNotInRange()}" class="calendar-button">&lt;</button> 
+                                {{this.calendarHeadMonth}} {{this.calendarHeadYear}}
+                             <button  [disabled]="NextMonthNotInRange()" (click)="NextMonthClicked()" [ngClass]="{'disabled-button': NextMonthNotInRange()}" class="calendar-button">&gt;</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th *ngFor="let dayInWeek of daysInWeek">{{dayInWeek}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let week of calendarDaysByWeek">
+                        <td *ngFor="let calendarDay of week" [ngClass]="{ 'sunday': calendarDay.isSunday, 'disabled-cell': !calendarDay.isInCurrentMonth}">{{calendarDay.day}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button (click)="CloseCalendar()" class="close-calendar-button">Close calendar</button>
+        </div>       
     </div>
 </div>
 

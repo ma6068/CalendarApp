@@ -23,7 +23,7 @@ export class CalendarComponent implements OnInit {
   customDate: any = "";
   isCustomDateErrorVisible: boolean = false;
 
-  // global static variables initialization
+  // global variables initialization
   daysInWeek = ["Monday", "Tuesday", "WednesDay", "Thursday", "Friday", "Saturday", "Sunday"];
   months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
@@ -35,6 +35,10 @@ export class CalendarComponent implements OnInit {
   variableHolidays: string[] = [];
   calendarDays = new Array<CalendarDay>();
   calendarDaysByWeek: CalendarDay[][] = [];
+  currentCalendarMonth: number = -1;
+  currentCalendarYear: number = -1;
+  calendarHeadMonth: string = "";
+  calendarHeadYear: string = "";
 
   // returns true if is a leap year, otherwise returns false
   IsLeapYear(year: number): boolean {
@@ -96,7 +100,8 @@ export class CalendarComponent implements OnInit {
           month: previousMonth,
           year: previousMonthYear,
           isSunday: false,
-          isHoliday: this.IsHoliday(i, previousMonth, previousMonthYear)
+          isHoliday: this.IsHoliday(i, previousMonth, previousMonthYear),
+          isInCurrentMonth: false
         };
         this.calendarDays.push(calendarDay);
       }
@@ -115,7 +120,8 @@ export class CalendarComponent implements OnInit {
         month: month,
         year: year,
         isSunday: false,
-        isHoliday: this.IsHoliday(i,  month, year)
+        isHoliday: this.IsHoliday(i,  month, year),
+        isInCurrentMonth: true
       };
       this.calendarDays.push(calendarDay);
     }
@@ -132,7 +138,8 @@ export class CalendarComponent implements OnInit {
         month: nextMonth,
         year: nextMonthYear,
         isSunday: false,
-        isHoliday: this.IsHoliday(i, nextMonth, nextMonthYear)
+        isHoliday: this.IsHoliday(i, nextMonth, nextMonthYear),
+        isInCurrentMonth: false
       };
       this.calendarDays.push(calendarDay);
     }
@@ -184,6 +191,10 @@ export class CalendarComponent implements OnInit {
   GetSelectedMonthDays(month: number, year: number) {
     this.calendarDays = new Array<CalendarDay>();
     this.calendarDaysByWeek = [];
+    this.currentCalendarMonth = month;
+    this.currentCalendarYear = year;
+    this.calendarHeadMonth = this.months[month - 1];
+    this.calendarHeadYear = year.toString();
     var leapYear = this.IsLeapYear(year);
     this.GetPreviousMonthDaysCalendar(month, year, leapYear);
     this.GetCurrentMonthDaysCalendar(month, year, leapYear);
@@ -260,6 +271,34 @@ export class CalendarComponent implements OnInit {
     else {
       this.isCustomDateErrorVisible = true;
     }
+  }
+
+  PreviousMonthClicked(){
+    this.currentCalendarMonth = this.currentCalendarMonth - 1 == 0 ? this.currentCalendarMonth = 12 : this.currentCalendarMonth - 1;
+    this.currentCalendarYear = this.currentCalendarMonth == 12 ? this.currentCalendarYear - 1 : this.currentCalendarYear;
+    this.GetSelectedMonthDays(this.currentCalendarMonth, this.currentCalendarYear);
+    this.GetMonthDaysByWeek();
+  }
+
+  NextMonthClicked() {
+    this.currentCalendarMonth = this.currentCalendarMonth + 1 > 12 ? this.currentCalendarMonth = 1 : this.currentCalendarMonth + 1;
+    this.currentCalendarYear = this.currentCalendarMonth == 1 ? this.currentCalendarYear + 1 : this.currentCalendarYear;
+    this.GetSelectedMonthDays(this.currentCalendarMonth, this.currentCalendarYear);
+    this.GetMonthDaysByWeek();
+  }
+
+  PreviousMonthNotInRange() {
+    if (this.currentCalendarMonth == 1 && this.currentCalendarYear == 1700) return true;
+    return false;
+  }
+
+  NextMonthNotInRange() {
+    if (this.currentCalendarMonth == 12 && this.currentCalendarYear == 2399) return true;
+    return false;
+  }
+
+  CloseCalendar() {
+    this.showCalendar = false;
   }
 
   ngOnInit() {

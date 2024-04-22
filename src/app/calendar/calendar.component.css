@@ -18,9 +18,9 @@ th {
     background-color: #f2f2f2;
 }
 
-tr:nth-child(even) {
+/* tr:nth-child(even) {
     background-color: #f2f2f2;
-}
+} */
 
 .center {
     text-align: center;
@@ -96,6 +96,20 @@ tr:nth-child(even) {
     cursor: pointer;
     border-radius: 8px;
   }
+
+  .calendar-button {
+    background-color: black;
+    border: none;
+    color: white;
+    padding: 6px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0px 10px;
+    cursor: pointer;
+    border-radius: 8px;
+  }
   
   /* Hover effect */
   .submit-button:hover {
@@ -113,5 +127,32 @@ tr:nth-child(even) {
     font-weight: bold;
     margin-top: 5px;
   }
+
+  .disabled-cell {
+    background-color: #f2f2f2; /* Light gray background */
+    color: #666; /* Text color for disabled look */
+}
+
+.disabled-button {
+    background-color: #ccc; /* Gray background */
+    color: #999; /* Light text color */
+}
+
+.close-calendar-button {
+    background-color: black; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 36px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+}
   
+.table-container {
+    position: relative;
+}
   
